@@ -27,19 +27,14 @@ public class uploadToHost implements PreferenceManager.OnActivityResultListener 
     private Context context;
     private Activity activity;
     private String UploadURL;
-    private String SuccessResult;
-    private String UnSuccessResult;
     private String selectedFilePath;
     private String UPLOAD_TAG = "learn-net uploader library";
     private String fileAddress;
 
-    public uploadToHost(Activity activity,Context c,String uploadURL,String fileAddress,String successResult,
-                        String unSuccessResult){
+    public uploadToHost(Activity activity,Context c,String uploadURL,String fileAddress){
         this.activity = activity;
         this.context = c;
         this.UploadURL = uploadURL;
-        this.SuccessResult = successResult;
-        this.UnSuccessResult = unSuccessResult;
         this.fileAddress = fileAddress;
     }
 
@@ -61,7 +56,7 @@ public class uploadToHost implements PreferenceManager.OnActivityResultListener 
             if(requestCode == PICK_FILE_REQUEST){
                 if(data == null){
                     //no data present
-                    Toast.makeText(context,"no file selected",Toast.LENGTH_SHORT).show();
+                    Log.e(UPLOAD_TAG,"no file selected");
                 }
                 Uri selectedFileUri = data.getData();
                 selectedFilePath = FilePath.getPath(context,selectedFileUri);
@@ -70,7 +65,7 @@ public class uploadToHost implements PreferenceManager.OnActivityResultListener 
                 if(selectedFilePath != null && !selectedFilePath.equals("")){
                     getSelectedFilePath();
                 }else{
-                    Toast.makeText(context,"Cannot upload file to server",Toast.LENGTH_SHORT).show();
+                    Log.e(UPLOAD_TAG,"Cannot upload file to server");
                 }
             }
         }
@@ -108,7 +103,6 @@ public class uploadToHost implements PreferenceManager.OnActivityResultListener 
             @Override
             public void run() {
                 String st = "Source File Doesn't Exist: " + selectedFilePath;
-                Toast.makeText(context,st,Toast.LENGTH_SHORT).show();
                 Log.e(UPLOAD_TAG,st);
             }
         });
@@ -170,7 +164,6 @@ public class uploadToHost implements PreferenceManager.OnActivityResultListener 
                     @Override
                     public void run() {
                         String st = "File Upload completed.\n\n You can see the uploaded file here: \n\n" + fileAddress+"/uploads/"+ fileName;
-                        Toast.makeText(context,st,Toast.LENGTH_SHORT).show();
                         Log.e(UPLOAD_TAG,st);
                     }
                 });
@@ -188,16 +181,16 @@ public class uploadToHost implements PreferenceManager.OnActivityResultListener 
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(context,"File Not Found",Toast.LENGTH_SHORT).show();
+                    Log.e(UPLOAD_TAG,"File Not Found");
                 }
             });
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            Toast.makeText(context, "URL error!", Toast.LENGTH_SHORT).show();
+            Log.e(UPLOAD_TAG, "URL error!");
 
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(context, "Cannot Read/Write File!", Toast.LENGTH_SHORT).show();
+            Log.e(UPLOAD_TAG, "Cannot Read/Write File!");
         }
         dialog.dismiss();
         return serverResponseCode;
